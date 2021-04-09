@@ -144,7 +144,7 @@ class UsersRepository:
         extension = picture.filename.split('.')[-1]
 
         filename = name + '.' + extension
-        folder_path = path + name + "/"
+        folder_path = path + user_id + "/"
         if not os.path.isdir(folder_path):
             os.mkdir(folder_path)
 
@@ -152,7 +152,7 @@ class UsersRepository:
             shutil.copyfileobj(picture.file, buffer)
 
         updated = get_time()
-        profile_pic = settings.ftp_server + name + "/" + filename
+        profile_pic = settings.ftp_server + user_id + "/" + filename
         result = users.update_one({"_id": user_id}, {"$set": {
             "profile_pic": profile_pic,
             'updated': updated
@@ -175,12 +175,12 @@ class DeepFakeRepository:
         extension = picture.filename.split('.')[-1]
 
         filename = picture_name + '.' + extension
-        folder_path = path + name + "/deepfake/"
+        folder_path = path + user_id + "/deepfake/"
         if not os.path.isdir(folder_path):
             os.mkdir(folder_path)
         
         updated = get_time()
-        image = settings.ftp_server + name  + "/deepfake/" + filename
+        image = settings.ftp_server + user_id  + "/deepfake/" + filename
         
         result = users.update_one({"_id": user_id}, {"$set": {
             "deepfake": {
@@ -209,7 +209,7 @@ class DeepFakeRepository:
 
         deepfake_name = document['deepfake']['name'].split('.')[0]
         filename = deepfake_name + '.' + extension
-        folder_path = path + name + "/deepfake/"
+        folder_path = path + user_id + "/deepfake/"
         if not os.path.isdir(folder_path):
             os.mkdir(folder_path)
 
@@ -217,7 +217,7 @@ class DeepFakeRepository:
             shutil.copyfileobj(audio.file, buffer)
 
         updated = get_time()
-        audio = settings.ftp_server + name + "/deepfake/" + filename
+        audio = settings.ftp_server + user_id + "/deepfake/" + filename
         
         result = users.update_one({"_id": user_id}, {"$set": {
             "deepfake.voice": audio,
@@ -236,7 +236,7 @@ class DeepFakeRepository:
             raise UserNotFoundException(user_id)
         
         name = document['name']
-        folder_path = path + name + "/deepfake/"
+        folder_path = path + user_id + "/deepfake/"
 
         #deepfake()
         return UsersRepository.get(user_id)
