@@ -8,6 +8,7 @@ import text2emotion as te
 from fastapi.responses import JSONResponse
 import wikiquote
 from quote2image import generate
+from wordcloud import WordCloud
 
 # # Package # #
 from .models import *
@@ -107,7 +108,16 @@ class UsersRepository:
         """User's Emotion Analysis"""
         
         document = users.find_one({"_id": user_id})
+        if 'states' not in document.keys():
+             return JSONResponse(
+                content={
+                    'message' : "Capture emotion first"
+                },
+                status_code=404
+            )
+
         emotions = document['states'][::-1]
+        notes = document['notes'][::-1] if 'notes' in document.keys() else []
 
         start,end  = get_week_timestamp()
 
@@ -123,22 +133,36 @@ class UsersRepository:
         if map:
             return emotion_map
 
+        notes_txt = 'Hello I am ' + document['name'] + "."
+        for note in notes:
+            if start <= notes['captured'] <= end:
+                notes_txt+=note['note'] +' '
+            else:
+                break  
+        
+        wordcloud = WordCloud().generate(notes_txt).to_image()
+
         quote = '7'*81
         while len(quote) > 80:
-            title = wikiquote.random_titles(max_titles=1)[0]
-            quote = wikiquote.quotes(title, max_quotes=1)[0]
-        #print(help(generate))
+            try:
+                title = wikiquote.random_titles(max_titles=1)[0]
+                quote = wikiquote.quotes(title, max_quotes=1)[0]
+            except:
+                quote = '7'*81
+                
         img = generate.main(quote + '\n' + title)
         
         folder_path = 'Uploads/' + user_id + '/'
         if not os.path.isdir(folder_path):
             os.mkdir(folder_path)
         
+        wordcloud.save(folder_path + 'wordcloud.jpg')
         img.save(folder_path + 'quote.jpg')
         return JSONResponse(
                 content={
                     'emotion' : emotion_map,
-                    'message' : settings.ftp_server + user_id + '/quote.jpg'
+                    'message' : settings.ftp_server + user_id + '/quote.jpg',
+                    'wordcloud' : settings.ftp_server + user_id + '/wordcloud.jpg'
                 },
                 status_code=200
             )
