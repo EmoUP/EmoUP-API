@@ -4,3 +4,4 @@ from .user_read import *
 from .user_address import *
 from .user_emotion import *
 from .user_deepfakes import *
+from .user_note import *

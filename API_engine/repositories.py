@@ -4,6 +4,7 @@ Methods to interact with the database
 
 # # Installed # #
 import bcrypt
+import text2emotion as te
 
 # # Package # #
 from .models import *
@@ -81,14 +82,39 @@ class UsersRepository:
         
         result = users.update_one({"_id": user_id}, {"$push": {
             "states" : {
-                "emotion" :emotion,
+                "emotion" :emotion.lower(),
                 "captured": updated
             }
         }})
         result = users.update_one({"_id": user_id}, {"$set": {
-            "current_emotion" : emotion,
+            "current_emotion" : emotion.lower(),
             "updated": updated
         }})
+
+        if not result.modified_count:
+            raise UserNotFoundException(identifier=user_id)
+        
+        return UsersRepository.get(user_id)
+    
+    @staticmethod
+    def add_note(user_id: str, note: Note):
+        """Update a user's note"""
+        note = note.dict()
+        updated = get_time()
+        
+        result = users.update_one({"_id": user_id}, {"$push": {
+            "notes" : {
+                "note" :note['note'],
+                "captured": note['captured'],
+                "color": note['color'],
+            }
+        }})
+
+        emotion = te.get_emotion(note['note'])
+        avg_emotion = sum(emotion.values()) / len(emotion)
+        for i in emotion:
+            if emotion[i] >= avg_emotion:
+                UsersRepository.update_emotion(user_id, i.lower())
 
         if not result.modified_count:
             raise UserNotFoundException(identifier=user_id)

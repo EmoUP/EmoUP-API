@@ -10,7 +10,7 @@ from fastapi import status as statuscode
 # # Package # #
 from .models import *
 from .exceptions import *
-from .repositories import UsersRepository, DeepFakeRepository
+from .repositories import UsersRepository, DeepFakeRepository, MusicRecommendationRepository
 from .middlewares import request_handler
 from .settings import api_settings as settings
 
@@ -103,6 +103,15 @@ def _add_profile_pic(user_id: str, picture: UploadFile = File(...)):
 )
 def _update_emotion(user_id: str, emotion: str):
     return UsersRepository.update_emotion(user_id, emotion)
+
+@app.post(
+    "/users/add-note",
+    response_model=UserRead,
+    description="Add Note of User",
+    tags=["users"]
+)
+def _add_note(user_id: str, note: Note):
+    return UsersRepository.add_note(user_id, note)
   
 @app.post(
     "/deep-fake/picture",

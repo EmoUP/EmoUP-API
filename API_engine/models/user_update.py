@@ -14,6 +14,7 @@ from .fields import UserFields
 from .user_address import Address
 from .user_emotion import Emotion
 from .user_deepfakes import DeepFake
+from .user_note import Note
 
 __all__ = ("UserUpdate",)
 
@@ -24,6 +25,7 @@ class UserUpdate(BaseModel):
     password: Optional[str] = UserFields.password
     address: Optional[Address] = UserFields.address_update
     states: Optional[List[Emotion]] = UserFields.states
+    notes: Optional[List[Note]] = UserFields.notes
     deepfake: Optional[DeepFake] = UserFields.deepfake
     birth: Optional[date] = UserFields.birth
     profile_pic: Optional[str] = UserFields.profile_pic

@@ -58,6 +58,9 @@ class UserFields:
     states = Field(
         description="Emotion state of user"
     )
+    notes = Field(
+        description="Notes of user"
+    )
     deepfake = Field(
         description="DeepFake repo of user"
     )
@@ -96,6 +99,23 @@ class StateFields:
     captured = Field(
         description="Capture time of the emotion (Unix timestamp)",
         **_unix_ts
+    )
+    
+class NoteFields:
+    note = Field(
+        description="Note of the user",
+        example="Hello, I finally won, really happy!",
+        **_string
+    )
+    captured = Field(
+        description="Capture time of the note",
+        example="06/04/2020",
+        **_string
+    )
+    color = Field(
+        description="Color selected by the user",
+        example="red",
+        **_string
     )
     
 class DeepFakeFields:
