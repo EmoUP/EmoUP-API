@@ -130,3 +130,6 @@ dmypy.json
 
 # Uploads
 Uploads/
+
+# Datasets
+Batch Upload/*.csv
