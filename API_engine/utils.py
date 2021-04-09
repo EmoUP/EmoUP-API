@@ -6,8 +6,9 @@ Misc helpers/utils functions
 from time import time
 from uuid import uuid4
 from typing import Union
+from datetime import date, timedelta, datetime
 
-__all__ = ("get_time", "get_uuid")
+__all__ = ("get_time", "get_uuid", "get_week_timestamp")
 
 
 def get_time(seconds_precision=True) -> Union[int, float]:
@@ -18,3 +19,12 @@ def get_time(seconds_precision=True) -> Union[int, float]:
 def get_uuid() -> str:
     """Returns an unique UUID (UUID4)"""
     return str(uuid4())
+
+def get_week_timestamp():
+    today = date.today()
+    start = today - timedelta(days=today.weekday())
+    end = start + timedelta(days=6)
+    start = int(datetime.strptime(str(start), "%Y-%m-%d").timestamp())
+    end = int(datetime.strptime(str(end), "%Y-%m-%d").timestamp())
+
+    return start,end

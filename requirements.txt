@@ -5,3 +5,5 @@ python-dateutil
 python-dotenv
 bcrypt
 text2emotion
+wikiquote
+quotes2image

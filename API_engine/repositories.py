@@ -5,12 +5,15 @@ Methods to interact with the database
 # # Installed # #
 import bcrypt
 import text2emotion as te
+from fastapi.responses import JSONResponse
+import wikiquote
+from quote2image import generate
 
 # # Package # #
 from .models import *
 from .exceptions import *
 from .database import users, doctors
-from .utils import get_time, get_uuid
+from .utils import get_time, get_uuid, get_week_timestamp
 from .settings import server_settings as settings
 
 # # Native # #
@@ -99,6 +102,39 @@ class UsersRepository:
         
         return UsersRepository.get(user_id)
     
+    @staticmethod
+    def emotion_analysis(user_id: str):
+        """User's Emotion Analysis"""
+        
+        document = users.find_one({"_id": user_id})
+        emotions = document['states'][::-1]
+
+        start,end  = get_week_timestamp()
+
+        emotion_map = {}
+        for emotion in emotions:
+            if start <= emotion['captured'] <= end:
+                if emotion['emotion'] in emotion_map:
+                    emotion_map[emotion['emotion']] += 1
+                else:
+                    emotion_map[emotion['emotion']] = 1
+            else:
+                break    
+        quote = '7'*81
+        while len(quote) > 80:
+            title = wikiquote.random_titles(max_titles=1)[0]
+            quote = wikiquote.quotes(title, max_quotes=1)[0]
+        #print(help(generate))
+        img = generate.main(quote + '\n' + title)
+
+        img.save('Uploads/' + user_id + '/quote.jpg')
+        return JSONResponse(
+                content={
+                    'emotion' : emotion_map,
+                    'message' : settings.ftp_server + user_id + '/quote.jpg'
+                },
+                status_code=200
+            )
     @staticmethod
     def add_note(user_id: str, note: Note):
         """Update a user's note"""

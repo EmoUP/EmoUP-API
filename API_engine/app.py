@@ -104,6 +104,14 @@ def _add_profile_pic(user_id: str, picture: UploadFile = File(...)):
 def _update_emotion(user_id: str, emotion: str, device: str):
     return UsersRepository.update_emotion(user_id, emotion, True if device == "true" else False)
 
+@app.get(
+    "/users/emotion-analysis/{user_id}",
+    description="Get Emotion Analysis of User",
+    tags=["users"]
+)
+def _emotion_analysis(user_id: str):
+    return UsersRepository.emotion_analysis(user_id)
+
 @app.post(
     "/users/add-note",
     response_model=UserRead,
