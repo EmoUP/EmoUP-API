@@ -151,8 +151,8 @@ def _deepfake(user_id: str):
     description="Give Music recommendations based on emotions",
     tags=["Therapies"]
 )
-def _music_recommendation(user_id: str, emotions: str):
-    return TherapyRepository.music_recommendation(user_id, emotions)
+def _music_recommendation(user_id: str):
+    return TherapyRepository.music_recommendation(user_id)
 
 @app.get(
     "/therapies/inspiration/{user_id}",

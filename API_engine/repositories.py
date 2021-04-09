@@ -103,7 +103,7 @@ class UsersRepository:
         return UsersRepository.get(user_id)
     
     @staticmethod
-    def emotion_analysis(user_id: str):
+    def emotion_analysis(user_id: str, map = False):
         """User's Emotion Analysis"""
         
         document = users.find_one({"_id": user_id})
@@ -119,7 +119,10 @@ class UsersRepository:
                 else:
                     emotion_map[emotion['emotion']] = 1
             else:
-                break    
+                break  
+        if map:
+            return emotion_map
+
         quote = '7'*81
         while len(quote) > 80:
             title = wikiquote.random_titles(max_titles=1)[0]
@@ -285,11 +288,35 @@ class DeepFakeRepository:
 class TherapyRepository:
 
     @staticmethod
-    def music_recommendation(user_id, emotion):
+    def music_recommendation(user_id):
         """Music Recommendation Engine through Emotion"""
         document = users.find_one({"_id": user_id})
         if not document:
             raise UserNotFoundException(user_id)
+        
+        emotion_map = UsersRepository.emotion_analysis(user_id,True)
+        current_emotion = document['current_emotion']
+        cluster = 1
+        count = [1,4,5]
+        if current_emotion in ['sad', 'angry', 'disgust']:
+            cluster = 0
+            count = [3,4,3]
+        elif current_emotion in ['neutral', 'fear']:
+            cluster = 2
+            count = [1,6,3]
+        
+        cursor = [music for music in musics.find()]
+        import random
+        playlist = []
+        for i,v in enumerate(count):
+            playlist+=random.choices([a for a in cursor if a['cluster'] == str(i)], k=v)
+        
+        return JSONResponse(
+                content={
+                    'songs' : playlist
+                },
+                status_code=200
+            )
     
     @staticmethod
     def inspiration_therapy(user_id: str):
