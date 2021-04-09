@@ -20,7 +20,7 @@ from .settings import server_settings as settings
 import os
 import shutil
 
-__all__ = ("UsersRepository", "DeepFakeRepository", "MusicRecommendationRepository", "DoctorRepository")
+__all__ = ("UsersRepository", "DeepFakeRepository", "TherapyRepository", "DoctorRepository")
 
 
 class UsersRepository:
@@ -139,6 +139,7 @@ class UsersRepository:
                 },
                 status_code=200
             )
+    
     @staticmethod
     def add_note(user_id: str, note: Note):
         """Update a user's note"""
@@ -281,7 +282,7 @@ class DeepFakeRepository:
         #deepfake()
         return UsersRepository.get(user_id)
 
-class MusicRecommendationRepository:
+class TherapyRepository:
 
     @staticmethod
     def music_recommendation(user_id, emotion):
@@ -289,6 +290,37 @@ class MusicRecommendationRepository:
         document = users.find_one({"_id": user_id})
         if not document:
             raise UserNotFoundException(user_id)
+    
+    @staticmethod
+    def inspiration_therapy(user_id: str):
+        """User's Emotion Analysis"""
+        
+        document = users.find_one({"_id": user_id})
+        
+        quotes = []
+        for i in range(5):
+            quote = '7'*81
+            while len(quote) > 80:
+                try:
+                    title = wikiquote.random_titles(max_titles=1)[0]
+                    quote = wikiquote.quotes(title, max_quotes=1)[0]
+                except:
+                    quote = '7'*81
+                    
+            img = generate.main(quote + '\n' + title)
+            folder_path = 'Uploads/' + user_id + '/'
+            if not os.path.isdir(folder_path):
+                os.mkdir(folder_path)
+
+            img.save(folder_path + 'quote' + str(i) + '.jpg')
+            quotes.append(settings.ftp_server + user_id + '/quote' + str(i) + '.jpg')
+
+        return JSONResponse(
+                content={
+                    'quotes' : quotes
+                },
+                status_code=200
+            )
         
 class DoctorRepository:
     @staticmethod

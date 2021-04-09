@@ -10,7 +10,7 @@ from fastapi import status as statuscode
 # # Package # #
 from .models import *
 from .exceptions import *
-from .repositories import UsersRepository, DeepFakeRepository, MusicRecommendationRepository, DoctorRepository
+from .repositories import UsersRepository, DeepFakeRepository, TherapyRepository, DoctorRepository
 from .middlewares import request_handler
 from .settings import api_settings as settings
 
@@ -147,12 +147,20 @@ def _deepfake(user_id: str):
     return DeepFakeRepository.deepfake(user_id)
 
 @app.get(
-    "/music-recommendation/{user_id}",
+    "/therapies/music-recommendation/{user_id}",
     description="Give Music recommendations based on emotions",
-    tags=["Music Recommendation"]
+    tags=["Therapies"]
 )
 def _music_recommendation(user_id: str, emotions: str):
-    return MusicRecommendationRepository.music_recommendation(user_id, emotions)
+    return TherapyRepository.music_recommendation(user_id, emotions)
+
+@app.get(
+    "/therapies/inspiration/{user_id}",
+    description="Give Inspiration quotes",
+    tags=["Therapies"]
+)
+def _music_recommendation(user_id: str):
+    return TherapyRepository.inspiration_therapy(user_id)
 
 @app.get(
     "/doctors",
