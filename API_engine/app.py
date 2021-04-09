@@ -10,7 +10,7 @@ from fastapi import status as statuscode
 # # Package # #
 from .models import *
 from .exceptions import *
-from .repositories import UsersRepository
+from .repositories import UsersRepository, DeepFakeRepository
 from .middlewares import request_handler
 from .settings import api_settings as settings
 
@@ -87,14 +87,48 @@ def _delete_user(user_id: str):
     UsersRepository.delete(user_id)
 
 @app.post(
-    "/add-profile-pic",
+    "/users/add-profile-pic",
     response_model=UserRead,
     description="Add Profile Pic",
     tags=["users"]
 )
 def _add_profile_pic(user_id: str, picture: UploadFile = File(...)):
     return UsersRepository.add_profile_pic(picture, user_id)
+
+@app.post(
+    "/users/update-emotion",
+    response_model=UserRead,
+    description="Update current Emotion of User",
+    tags=["users"]
+)
+def _update_emotion(user_id: str, emotion: str):
+    return UsersRepository.update_emotion(user_id, emotion)
   
+@app.post(
+    "/deep-fake/picture",
+    description="Add DeepFake Pic",
+    tags=["Deep Fake"]
+)
+def _add_deepfake_pic(user_id: str, name: str, picture: UploadFile = File(...)):
+    return DeepFakeRepository.add_deepfake_pic(picture, name, user_id)
+
+@app.post(
+    "/deep-fake/audio",
+    description="Add DeepFake Audio",
+    tags=["Deep Fake"]
+)
+def _add_deepfake_audio(user_id: str, audio: UploadFile = File(...)):
+    return DeepFakeRepository.add_deepfake_audio(audio, user_id)
+
+@app.get(
+    "/deep-fake/result/{user_id}",
+    response_model=UsersRead,
+    description="Add DeepFake",
+    tags=["Deep Fake"]
+)
+def _deepfake(user_id: str):
+    return DeepFakeRepository.deepfake(user_id)
+
 def run():
     """Run the API using Uvicorn"""
     uvicorn.run(

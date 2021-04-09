@@ -40,6 +40,11 @@ class UserFields:
         example="http://emoupup.com/1/profile",
         **_string
     )
+    current_emotion = Field(
+        description="Current Emotion of this user",
+        example="Happy",
+        **_string
+    )
     address = Field(
         description="Address object where this user live"
     )
@@ -49,6 +54,12 @@ class UserFields:
     birth = Field(
         description="Date of birth, in format YYYY-MM-DD, or Unix timestamp",
         example="1999-12-31"
+    )
+    states = Field(
+        description="Emotion state of user"
+    )
+    deepfake = Field(
+        description="DeepFake repo of user"
     )
     age = Field(
         description="Age of this user, if date of birth is specified",
@@ -76,6 +87,39 @@ class UserFields:
     """Created is set on UsersRepository.update (and initially on create)"""
 
 
+class StateFields:
+    emotion = Field(
+        description="Emotion of the user",
+        example="Happy",
+        **_string
+    )
+    captured = Field(
+        description="Capture time of the emotion (Unix timestamp)",
+        **_unix_ts
+    )
+    
+class DeepFakeFields:
+    name = Field(
+        description="Name of the person given by user",
+        example="Johana Doe",
+        **_string
+    )
+    image = Field(
+        description="Image of this person given by user",
+        example="http://emoupup.com/1/deepfake/1.jpg",
+        **_string
+    )
+    voice = Field(
+        description="Voice of this person given by the user",
+        example="http://emoupup.com/1//deepfake/1.wav",
+        **_string
+    )
+    output = Field(
+        description="Output Video of this person",
+        example="http://emoupup.com/1/deepfake/1.mp4",
+        **_string
+    )
+    
 class AddressFields:
     street = Field(
         description="Main address line",
