@@ -27,7 +27,7 @@ app.middleware("http")(request_handler)
     "/users",
     response_model=UsersRead,
     description="List all the available users",
-    tags=["users"]
+    tags=["Users"]
 )
 def _list_users():
     # TODO Filters
@@ -39,7 +39,7 @@ def _list_users():
     response_model=UserRead,
     description="Get a single user by its unique ID",
     responses=get_exception_responses(UserNotFoundException),
-    tags=["users"]
+    tags=["Users"]
 )
 def _get_user(user_id: str):
     return UsersRepository.get(user_id)
@@ -51,7 +51,7 @@ def _get_user(user_id: str):
     response_model=UserRead,
     status_code=statuscode.HTTP_201_CREATED,
     responses=get_exception_responses(UserAlreadyExistsException),
-    tags=["users"]
+    tags=["Users"]
 )
 def _create_user(create: UserCreate):
     return UsersRepository.create(create)
@@ -60,7 +60,7 @@ def _create_user(create: UserCreate):
     "/users/login",
     description="Login into system",
     responses=get_exception_responses(UserNotFoundException),
-    tags=["users"]
+    tags=["Users"]
 )
 def _login_user(email: str, password: str):
     return UsersRepository.login(email,password)
@@ -70,7 +70,7 @@ def _login_user(email: str, password: str):
     description="Update a single user by its unique ID, providing the fields to update",
     status_code=statuscode.HTTP_204_NO_CONTENT,
     responses=get_exception_responses(UserNotFoundException, UserAlreadyExistsException),
-    tags=["users"]
+    tags=["Users"]
 )
 def _update_user(user_id: str, update: UserUpdate):
     UsersRepository.update(user_id, update)
@@ -81,7 +81,7 @@ def _update_user(user_id: str, update: UserUpdate):
     description="Delete a single user by its unique ID",
     status_code=statuscode.HTTP_204_NO_CONTENT,
     responses=get_exception_responses(UserNotFoundException),
-    tags=["users"]
+    tags=["Users"]
 )
 def _delete_user(user_id: str):
     UsersRepository.delete(user_id)
@@ -90,7 +90,7 @@ def _delete_user(user_id: str):
     "/users/add-profile-pic",
     response_model=UserRead,
     description="Add Profile Pic",
-    tags=["users"]
+    tags=["Users"]
 )
 def _add_profile_pic(user_id: str, picture: UploadFile = File(...)):
     return UsersRepository.add_profile_pic(picture, user_id)
@@ -99,7 +99,7 @@ def _add_profile_pic(user_id: str, picture: UploadFile = File(...)):
     "/users/update-emotion",
     response_model=UserRead,
     description="Update current Emotion of User",
-    tags=["users"]
+    tags=["Users"]
 )
 def _update_emotion(user_id: str, emotion: str, device: str):
     return UsersRepository.update_emotion(user_id, emotion, True if device == "true" else False)
@@ -107,7 +107,7 @@ def _update_emotion(user_id: str, emotion: str, device: str):
 @app.get(
     "/users/emotion-analysis/{user_id}",
     description="Get Emotion Analysis of User",
-    tags=["users"]
+    tags=["Users"]
 )
 def _emotion_analysis(user_id: str):
     return UsersRepository.emotion_analysis(user_id)
@@ -116,7 +116,7 @@ def _emotion_analysis(user_id: str):
     "/users/add-note",
     response_model=UserRead,
     description="Add Note of User",
-    tags=["users"]
+    tags=["Users"]
 )
 def _add_note(user_id: str, note: Note):
     return UsersRepository.add_note(user_id, note)
@@ -159,7 +159,7 @@ def _music_recommendation(user_id: str, emotions: str):
     description="Give Inspiration quotes",
     tags=["Therapies"]
 )
-def _music_recommendation(user_id: str):
+def _inspiration_therapy(user_id: str):
     return TherapyRepository.inspiration_therapy(user_id)
 
 @app.get(
