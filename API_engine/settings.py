@@ -34,6 +34,7 @@ class MongoSettings(BaseSettings):
     database: str = "emoup"
     users: str = "users"
     doctors: str = "doctors"
+    musics: str = "musics"
 
     class Config(BaseSettings.Config):
         env_prefix = "MONGO_"

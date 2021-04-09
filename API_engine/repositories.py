@@ -12,7 +12,7 @@ from quote2image import generate
 # # Package # #
 from .models import *
 from .exceptions import *
-from .database import users, doctors
+from .database import users, doctors, musics
 from .utils import get_time, get_uuid, get_week_timestamp
 from .settings import server_settings as settings
 
@@ -20,7 +20,7 @@ from .settings import server_settings as settings
 import os
 import shutil
 
-__all__ = ("UsersRepository", "DeepFakeRepository", "TherapyRepository", "DoctorRepository")
+__all__ = ("UsersRepository", "DeepFakeRepository", "TherapyRepository", "DoctorRepository", "MusicRepository")
 
 
 class UsersRepository:
@@ -397,3 +397,50 @@ class DoctorRepository:
         })
         
         return DoctorRepository.get(doctor_id)
+
+class MusicRepository:
+    @staticmethod
+    def get(music_id: str) -> MusicRead:
+        """Retrieve a single Music by its unique id"""
+        document = musics.find_one({"_id": music_id})
+        if not document:
+            raise MusicNotFoundException(music_id)
+        return MusicRead(**document)
+    
+    @staticmethod
+    def list() -> MusicsRead:
+        """Retrieve all the available musics"""
+        cursor = musics.find()
+        return [MusicRead(**document) for document in cursor]
+
+    @staticmethod
+    def create(create: MusicCreate) -> MusicRead:
+        """Create a music and return its Read object"""
+        document = create.dict()
+        document["created"] = document["updated"] = get_time()
+        document["_id"] = get_uuid()
+        
+        # The time and id could be inserted as a model's Field default factory,
+        # but would require having another model for Repository only to implement it
+
+        result = musics.insert_one(document)
+        assert result.acknowledged
+
+        return MusicRepository.get(result.inserted_id)
+
+    @staticmethod
+    def update(music_id: str, update: MusicUpdate):
+        """Update a music by giving only the fields to update"""
+        document = update.dict()
+        document["updated"] = get_time()
+
+        result = musics.update_one({"_id": music_id}, {"$set": document})
+        if not result.modified_count:
+            raise MusicNotFoundException(identifier=music_id)        
+
+    @staticmethod
+    def delete(music_id: str):
+        """Delete a music given its unique id"""
+        result = musics.delete_one({"_id": music_id})
+        if not result.deleted_count:
+            raise MusicNotFoundException(identifier=music_id)

@@ -21,6 +21,7 @@ __all__ = (
     "UserNotFoundException", "InvalidUserPasswordException", 
     "UserAlreadyExistsException", "get_exception_responses",
     "DoctorNotFoundException", "DoctorAlreadyExistsException",
+    "MusicNotFoundException", "MusicAlreadyExistsException",
 )
 
 
@@ -93,6 +94,14 @@ class DoctorNotFoundException(NotFoundException):
 class DoctorAlreadyExistsException(AlreadyExistsException):
     """Error raised when a doctor already exists"""
     message = "The doctor already exists"
+
+class MusicNotFoundException(NotFoundException):
+    """Error raised when a music does not exist"""
+    message = "The music does not exist"
+
+class MusicAlreadyExistsException(AlreadyExistsException):
+    """Error raised when a music already exists"""
+    message = "The music already exists"
 
 
 def get_exception_responses(*args: Type[BaseAPIException]) -> dict:

@@ -10,7 +10,7 @@ from fastapi import status as statuscode
 # # Package # #
 from .models import *
 from .exceptions import *
-from .repositories import UsersRepository, DeepFakeRepository, TherapyRepository, DoctorRepository
+from .repositories import UsersRepository, DeepFakeRepository, TherapyRepository, DoctorRepository, MusicRepository
 from .middlewares import request_handler
 from .settings import api_settings as settings
 
@@ -224,6 +224,60 @@ def _delete_doctor(doctor_id: str):
 )
 def _add_profile_pic(doctor_id: str, picture: UploadFile = File(...)):
     return DoctorRepository.add_profile_pic(picture, doctor_id)
+
+@app.get(
+    "/musics",
+    response_model=MusicsRead,
+    description="List all the available musics",
+    tags=["Musics"]
+)
+def _list_musics():
+    # TODO Filters
+    return MusicRepository.list()
+
+
+@app.get(
+    "/musics/{music_id}",
+    response_model=MusicRead,
+    description="Get a single music by its unique ID",
+    responses=get_exception_responses(MusicNotFoundException),
+    tags=["Musics"]
+)
+def _get_music(music_id: str):
+    return MusicRepository.get(music_id)
+
+
+@app.post(
+    "/musics",
+    description="Create a new music",
+    response_model=MusicRead,
+    status_code=statuscode.HTTP_201_CREATED,
+    responses=get_exception_responses(MusicAlreadyExistsException),
+    tags=["Musics"]
+)
+def _create_music(create: MusicCreate):
+    return MusicRepository.create(create)
+
+@app.patch(
+    "/musics/{music_id}",
+    description="Update a single music by its unique ID, providing the fields to update",
+    status_code=statuscode.HTTP_204_NO_CONTENT,
+    responses=get_exception_responses(MusicNotFoundException, MusicAlreadyExistsException),
+    tags=["Musics"]
+)
+def _update_music(music_id: str, update: MusicUpdate):
+    MusicRepository.update(music_id, update)
+
+
+@app.delete(
+    "/musics/{music_id}",
+    description="Delete a single music by its unique ID",
+    status_code=statuscode.HTTP_204_NO_CONTENT,
+    responses=get_exception_responses(MusicNotFoundException),
+    tags=["Musics"]
+)
+def _delete_music(music_id: str):
+    MusicRepository.delete(music_id)
 
 def run():
     """Run the API using Uvicorn"""

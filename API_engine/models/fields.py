@@ -249,3 +249,48 @@ class DoctorFields:
     )
     """Created is set on DoctorsRepository.update (and initially on create)"""
 
+
+class MusicFields:
+    name = Field(
+        description="Full name of this music",
+        example="John Doe",
+        **_string
+    )
+    url = Field(
+        description="URL of this music",
+        example="http://abc.mp3",
+        **_string
+    )
+    cluster = Field(
+        description="Cluster of this music",
+        example="Happy",
+        **_string
+    )
+    number_of_likes = Field(
+        description="Number of Likes of this music",
+        example=5
+    )
+    counts = Field(
+        description="Likes of this music, as a list of users"
+    )
+    music_id = Field(
+        description="Unique identifier of this music in the database",
+        example=get_uuid(),
+        min_length=36,
+        max_length=36
+    )
+    """The music_id is the _id field of Mongo documents, and is set on MusicsRepository.create"""
+
+    created = Field(
+        alias="created",
+        description="When the music was registered (Unix timestamp)",
+        **_unix_ts
+    )
+    """Created is set on MusicsRepository.create"""
+    updated = Field(
+        alias="updated",
+        description="When the music was updated for the last time (Unix timestamp)",
+        **_unix_ts
+    )
+    """Created is set on MusicsRepository.update (and initially on create)"""
+

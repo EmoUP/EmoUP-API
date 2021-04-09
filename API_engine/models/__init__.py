@@ -8,3 +8,6 @@ from .user_note import *
 from .doctor_update import *
 from .doctor_create import *
 from .doctor_read import *
+from .music_update import *
+from .music_create import *
+from .music_read import *
