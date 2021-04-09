@@ -165,3 +165,87 @@ class AddressFields:
         example="452005",
         **_string
     )
+
+class DoctorFields:
+    name = Field(
+        description="Full name of this doctor",
+        example="John Doe",
+        **_string
+    )
+    gender = Field(
+        description="Gender of this doctor",
+        example="Male",
+        **_string
+    )
+    mobile = Field(
+        description="Mobile of this doctor",
+        example=9999988888
+    )
+    profile_pic = Field(
+        description="Profile Photo of this doctor",
+        example="http://emoupup.com/1/profile",
+        **_string
+    )
+    degree = Field(
+        description="Degree of this doctor",
+        example="M.B.B.S",
+        **_string
+    )
+    about_doctor = Field(
+        description="About Doctor",
+        example="Professional surgeon",
+        **_string
+    )
+    consultation_place = Field(
+        description="Consultation Place address of this doctor",
+        example="Vijaynagar, Indore",
+        **_string
+    )
+    services_provided = Field(
+        description="Services provided by this doctor",
+        example="surgeon",
+        **_string
+    )
+    address = Field(
+        description="Address of this doctor",
+        example="Vijaynagar, Indore",
+        **_string
+    )
+    about_doctor = Field(
+        description="About Doctor of this doctor",
+        example="Professional surgeon",
+        **_string
+    )
+    latitude = Field(
+        description="Latitude of this doctor's location",
+        example=22.756
+    )
+    longitude = Field(
+        description="Longitude of this doctor's location",
+        example=77.756
+    )
+    ratings = Field(
+        description="Rating of this doctor",
+        example=4.5
+    )
+    doctor_id = Field(
+        description="Unique identifier of this doctor in the database",
+        example=get_uuid(),
+        min_length=36,
+        max_length=36
+    )
+    """The doctor_id is the _id field of Mongo documents, and is set on DoctorsRepository.create"""
+
+    created = Field(
+        alias="created",
+        description="When the doctor was registered (Unix timestamp)",
+        **_unix_ts
+    )
+    """Created is set on DoctorsRepository.create"""
+    updated = Field(
+        alias="updated",
+        description="When the doctor was updated for the last time (Unix timestamp)",
+        **_unix_ts
+    )
+    """Created is set on DoctorsRepository.update (and initially on create)"""
+

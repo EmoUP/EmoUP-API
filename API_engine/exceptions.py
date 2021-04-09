@@ -19,7 +19,8 @@ __all__ = (
     "BaseAPIException", "BaseIdentifiedException",
     "NotFoundException", "AlreadyExistsException",
     "UserNotFoundException", "InvalidUserPasswordException", 
-    "UserAlreadyExistsException", "get_exception_responses"
+    "UserAlreadyExistsException", "get_exception_responses",
+    "DoctorNotFoundException", "DoctorAlreadyExistsException",
 )
 
 
@@ -84,6 +85,14 @@ class InvalidUserPasswordException(NotFoundException):
 class UserAlreadyExistsException(AlreadyExistsException):
     """Error raised when a user already exists"""
     message = "The user already exists"
+
+class DoctorNotFoundException(NotFoundException):
+    """Error raised when a doctor does not exist"""
+    message = "The doctor does not exist"
+
+class DoctorAlreadyExistsException(AlreadyExistsException):
+    """Error raised when a doctor already exists"""
+    message = "The doctor already exists"
 
 
 def get_exception_responses(*args: Type[BaseAPIException]) -> dict:

@@ -14,3 +14,4 @@ __all__ = ("client", "collection")
 client = MongoClient(settings.uri)
 client.admin.authenticate(settings.user, settings.password, mechanism = 'SCRAM-SHA-1', source='admin')
 users: Collection = client[settings.database][settings.users]
+doctors: Collection = client[settings.database][settings.doctors]

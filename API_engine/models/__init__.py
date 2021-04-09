@@ -5,3 +5,6 @@ from .user_address import *
 from .user_emotion import *
 from .user_deepfakes import *
 from .user_note import *
+from .doctor_update import *
+from .doctor_create import *
+from .doctor_read import *

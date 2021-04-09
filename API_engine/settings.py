@@ -33,6 +33,7 @@ class MongoSettings(BaseSettings):
     password: str = '4Fjr#3H*O&2vf2'
     database: str = "emoup"
     users: str = "users"
+    doctors: str = "doctors"
 
     class Config(BaseSettings.Config):
         env_prefix = "MONGO_"

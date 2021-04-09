@@ -10,7 +10,7 @@ from fastapi import status as statuscode
 # # Package # #
 from .models import *
 from .exceptions import *
-from .repositories import UsersRepository, DeepFakeRepository, MusicRecommendationRepository
+from .repositories import UsersRepository, DeepFakeRepository, MusicRecommendationRepository, DoctorRepository
 from .middlewares import request_handler
 from .settings import api_settings as settings
 
@@ -146,6 +146,68 @@ def _deepfake(user_id: str):
 def _music_recommendation(user_id: str, emotions: str):
     return MusicRecommendationRepository.music_recommendation(user_id, emotions)
 
+@app.get(
+    "/doctors",
+    response_model=DoctorsRead,
+    description="List all the available doctors",
+    tags=["Doctors"]
+)
+def _list_doctors():
+    # TODO Filters
+    return DoctorRepository.list()
+
+
+@app.get(
+    "/doctors/{doctor_id}",
+    response_model=DoctorRead,
+    description="Get a single doctor by its unique ID",
+    responses=get_exception_responses(DoctorNotFoundException),
+    tags=["Doctors"]
+)
+def _get_doctor(doctor_id: str):
+    return DoctorRepository.get(doctor_id)
+
+
+@app.post(
+    "/doctors",
+    description="Create a new doctor",
+    response_model=DoctorRead,
+    status_code=statuscode.HTTP_201_CREATED,
+    responses=get_exception_responses(DoctorAlreadyExistsException),
+    tags=["Doctors"]
+)
+def _create_doctor(create: DoctorCreate):
+    return DoctorRepository.create(create)
+
+@app.patch(
+    "/doctors/{doctor_id}",
+    description="Update a single doctor by its unique ID, providing the fields to update",
+    status_code=statuscode.HTTP_204_NO_CONTENT,
+    responses=get_exception_responses(DoctorNotFoundException, DoctorAlreadyExistsException),
+    tags=["Doctors"]
+)
+def _update_doctor(doctor_id: str, update: DoctorUpdate):
+    DoctorRepository.update(doctor_id, update)
+
+
+@app.delete(
+    "/doctors/{doctor_id}",
+    description="Delete a single doctor by its unique ID",
+    status_code=statuscode.HTTP_204_NO_CONTENT,
+    responses=get_exception_responses(DoctorNotFoundException),
+    tags=["Doctors"]
+)
+def _delete_doctor(doctor_id: str):
+    DoctorRepository.delete(doctor_id)
+
+@app.post(
+    "/doctors/add-profile-pic",
+    response_model=DoctorRead,
+    description="Add Profile Pic",
+    tags=["Doctors"]
+)
+def _add_profile_pic(doctor_id: str, picture: UploadFile = File(...)):
+    return DoctorRepository.add_profile_pic(picture, doctor_id)
 
 def run():
     """Run the API using Uvicorn"""

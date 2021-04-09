@@ -9,7 +9,7 @@ import text2emotion as te
 # # Package # #
 from .models import *
 from .exceptions import *
-from .database import users
+from .database import users, doctors
 from .utils import get_time, get_uuid
 from .settings import server_settings as settings
 
@@ -17,7 +17,7 @@ from .settings import server_settings as settings
 import os
 import shutil
 
-__all__ = ("UsersRepository", "DeepFakeRepository", "MusicRecommendationRepository")
+__all__ = ("UsersRepository", "DeepFakeRepository", "MusicRecommendationRepository", "DoctorRepository")
 
 
 class UsersRepository:
@@ -250,3 +250,78 @@ class MusicRecommendationRepository:
         if not document:
             raise UserNotFoundException(user_id)
         
+class DoctorRepository:
+    @staticmethod
+    def get(doctor_id: str) -> DoctorRead:
+        """Retrieve a single Doctor by its unique id"""
+        document = doctors.find_one({"_id": doctor_id})
+        if not document:
+            raise DoctorNotFoundException(doctor_id)
+        return DoctorRead(**document)
+    
+    @staticmethod
+    def list() -> DoctorsRead:
+        """Retrieve all the available doctors"""
+        cursor = doctors.find()
+        return [DoctorRead(**document) for document in cursor]
+
+    @staticmethod
+    def create(create: DoctorCreate) -> DoctorRead:
+        """Create a doctor and return its Read object"""
+        document = create.dict()
+        document["created"] = document["updated"] = get_time()
+        document["_id"] = get_uuid()
+        
+        # The time and id could be inserted as a model's Field default factory,
+        # but would require having another model for Repository only to implement it
+
+        result = doctors.insert_one(document)
+        assert result.acknowledged
+
+        return DoctorRepository.get(result.inserted_id)
+
+    @staticmethod
+    def update(doctor_id: str, update: DoctorUpdate):
+        """Update a doctor by giving only the fields to update"""
+        document = update.dict()
+        document["updated"] = get_time()
+
+        result = doctors.update_one({"_id": doctor_id}, {"$set": document})
+        if not result.modified_count:
+            raise DoctorNotFoundException(identifier=doctor_id)        
+
+    @staticmethod
+    def delete(doctor_id: str):
+        """Delete a doctor given its unique id"""
+        result = doctors.delete_one({"_id": doctor_id})
+        if not result.deleted_count:
+            raise DoctorNotFoundException(identifier=doctor_id)
+
+    @staticmethod
+    def add_profile_pic(picture, doctor_id):
+        """Profile Picture uploaded by doctor"""
+        path = "Uploads/"
+        document = doctors.find_one({"_id": doctor_id})
+        if not document:
+            raise DoctorNotFoundException(doctor_id)
+        
+        name = document['name']
+        extension = picture.filename.split('.')[-1]
+
+        filename = name + '.' + extension
+        folder_path = path + doctor_id + "/"
+        if not os.path.isdir(folder_path):
+            os.mkdir(folder_path)
+
+        with open(folder_path + filename, "wb") as buffer:
+            shutil.copyfileobj(picture.file, buffer)
+
+        updated = get_time()
+        profile_pic = settings.ftp_server + doctor_id + "/" + filename
+        result = doctors.update_one({"_id": doctor_id}, {"$set": {
+            "profile_pic": profile_pic,
+            'updated': updated
+            }
+        })
+        
+        return DoctorRepository.get(doctor_id)
