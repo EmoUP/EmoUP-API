@@ -5,7 +5,7 @@ Settings loaders using Pydantic BaseSettings classes (load from environment vari
 # # Installed # #
 import pydantic
 
-__all__ = ("api_settings", "mongo_settings")
+__all__ = ("api_settings", "server_settings", "mongo_settings")
 
 
 class BaseSettings(pydantic.BaseSettings):
@@ -22,9 +22,13 @@ class APISettings(BaseSettings):
     class Config(BaseSettings.Config):
         env_prefix = "API_"
 
+class ServerSettings(BaseSettings):
+    ftp_server : str = 'http://52.188.203.118:5003/'
+    class Config(BaseSettings.Config):
+        env_prefix = "Server_"
 
 class MongoSettings(BaseSettings):
-    uri: str = "mongodb://13.68.249.56:5001"
+    uri: str = "mongodb://52.188.203.118:5001"
     user: str = 'emoup'
     password: str = '4Fjr#3H*O&2vf2'
     database: str = "emoup"
@@ -35,4 +39,5 @@ class MongoSettings(BaseSettings):
 
 
 api_settings = APISettings()
+server_settings = ServerSettings()
 mongo_settings = MongoSettings()
