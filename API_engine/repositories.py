@@ -126,8 +126,12 @@ class UsersRepository:
             quote = wikiquote.quotes(title, max_quotes=1)[0]
         #print(help(generate))
         img = generate.main(quote + '\n' + title)
-
-        img.save('Uploads/' + user_id + '/quote.jpg')
+        
+        folder_path = 'Uploads/' + user_id + '/'
+        if not os.path.isdir(folder_path):
+            os.mkdir(folder_path)
+        
+        img.save(folder_path + 'quote.jpg')
         return JSONResponse(
                 content={
                     'emotion' : emotion_map,
