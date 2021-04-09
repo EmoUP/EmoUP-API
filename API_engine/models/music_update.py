@@ -18,7 +18,7 @@ __all__ = ("MusicUpdate",)
 class MusicUpdate(BaseModel):
     """Body of Music PATCH requests"""
     name: Optional[str] = MusicFields.name
-    url: Optional[str] = MusicFields.url
+    spotify_id: Optional[str] = MusicFields.spotify_id
     cluster: Optional[str] = MusicFields.cluster
     counts: Optional[List[str]] = MusicFields.counts
     number_of_likes: Optional[int] = MusicFields.number_of_likes

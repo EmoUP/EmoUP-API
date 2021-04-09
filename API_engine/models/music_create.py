@@ -13,5 +13,7 @@ __all__ = ("MusicCreate",)
 class MusicCreate(MusicUpdate):
     """The information of a Music"""
     name: str = MusicFields.name
-    url: str = MusicFields.url
+    spotify_id: str = MusicFields.spotify_id
+    cluster: str = MusicFields.cluster
+    number_of_likes: int = MusicFields.number_of_likes
     

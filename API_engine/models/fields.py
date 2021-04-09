@@ -256,9 +256,9 @@ class MusicFields:
         example="John Doe",
         **_string
     )
-    url = Field(
-        description="URL of this music",
-        example="http://abc.mp3",
+    spotify_id = Field(
+        description="Spotify id of this music",
+        example="2454JJDEK32",
         **_string
     )
     cluster = Field(
