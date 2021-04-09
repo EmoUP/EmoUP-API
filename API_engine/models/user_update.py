@@ -30,6 +30,7 @@ class UserUpdate(BaseModel):
     birth: Optional[date] = UserFields.birth
     profile_pic: Optional[str] = UserFields.profile_pic
     current_emotion: Optional[str] = UserFields.current_emotion
+    device_id: Optional[str] = UserFields.device_id
 
     def dict(self, **kwargs):
         # The "birth" field must be converted to string (isoformat) when exporting to dict (for Mongo)

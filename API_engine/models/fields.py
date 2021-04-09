@@ -68,6 +68,10 @@ class UserFields:
         description="Age of this user, if date of birth is specified",
         example=20
     )
+    device_id = Field(
+        description="Emoup Device id of this user in the database",
+        example="1BDKfbibi1234"
+    )
     user_id = Field(
         description="Unique identifier of this user in the database",
         example=get_uuid(),

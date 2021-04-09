@@ -17,7 +17,7 @@ from .settings import server_settings as settings
 import os
 import shutil
 
-__all__ = ("UsersRepository", "DeepFakeRepository")
+__all__ = ("UsersRepository", "DeepFakeRepository", "MusicRecommendationRepository")
 
 
 class UsersRepository:
@@ -76,10 +76,13 @@ class UsersRepository:
             raise UserNotFoundException(identifier=user_id)
     
     @staticmethod
-    def update_emotion(user_id: str, emotion: str):
+    def update_emotion(id: str, emotion: str, device: bool = False):
         """Update a user's emotion"""
         updated = get_time()
-        
+        user_id = id
+        if device:
+            user_id = users.find_one({"device_id": id})['_id']
+
         result = users.update_one({"_id": user_id}, {"$push": {
             "states" : {
                 "emotion" :emotion.lower(),
@@ -237,3 +240,13 @@ class DeepFakeRepository:
 
         #deepfake()
         return UsersRepository.get(user_id)
+
+class MusicRecommendationRepository:
+
+    @staticmethod
+    def music_recommendation(user_id, emotion):
+        """Music Recommendation Engine through Emotion"""
+        document = users.find_one({"_id": user_id})
+        if not document:
+            raise UserNotFoundException(user_id)
+        

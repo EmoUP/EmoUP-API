@@ -101,8 +101,8 @@ def _add_profile_pic(user_id: str, picture: UploadFile = File(...)):
     description="Update current Emotion of User",
     tags=["users"]
 )
-def _update_emotion(user_id: str, emotion: str):
-    return UsersRepository.update_emotion(user_id, emotion)
+def _update_emotion(user_id: str, emotion: str, device: str):
+    return UsersRepository.update_emotion(user_id, emotion, True if device == "true" else False)
 
 @app.post(
     "/users/add-note",
@@ -137,6 +137,15 @@ def _add_deepfake_audio(user_id: str, audio: UploadFile = File(...)):
 )
 def _deepfake(user_id: str):
     return DeepFakeRepository.deepfake(user_id)
+
+@app.get(
+    "/music-recommendation/{user_id}",
+    description="Give Music recommendations based on emotions",
+    tags=["Music Recommendation"]
+)
+def _music_recommendation(user_id: str, emotions: str):
+    return MusicRecommendationRepository.music_recommendation(user_id, emotions)
+
 
 def run():
     """Run the API using Uvicorn"""
