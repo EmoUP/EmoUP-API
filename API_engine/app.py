@@ -4,7 +4,7 @@ FastAPI app definition, initialization and definition of routes
 
 # # Installed # #
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from fastapi import status as statuscode
 
 # # Package # #
@@ -86,7 +86,15 @@ def _update_user(user_id: str, update: UserUpdate):
 def _delete_user(user_id: str):
     UsersRepository.delete(user_id)
 
-
+@app.post(
+    "/add-profile-pic",
+    response_model=UserRead,
+    description="Add Profile Pic",
+    tags=["users"]
+)
+def _add_profile_pic(user_id: str, picture: UploadFile = File(...)):
+    return UsersRepository.add_profile_pic(picture, user_id)
+  
 def run():
     """Run the API using Uvicorn"""
     uvicorn.run(

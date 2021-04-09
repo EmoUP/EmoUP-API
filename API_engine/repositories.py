@@ -10,6 +10,11 @@ from .models import *
 from .exceptions import *
 from .database import users
 from .utils import get_time, get_uuid
+from .settings import server_settings as settings
+
+# # Native # #
+import os
+import shutil
 
 __all__ = ("UsersRepository",)
 
@@ -75,3 +80,33 @@ class UsersRepository:
         result = users.delete_one({"_id": user_id})
         if not result.deleted_count:
             raise UserNotFoundException(identifier=user_id)
+
+    @staticmethod
+    def add_profile_pic(picture, user_id):
+        """Profile Picture uploaded by user"""
+        path = "Uploads/"
+        document = users.find_one({"_id": user_id})
+        if not document:
+            raise UserNotFoundException(user_id)
+        
+        name = document['name']
+        extension = picture.filename.split('.')[-1]
+
+        filename = name + '.' + extension
+        folder_path = path + name + "/"
+        if not os.path.isdir(folder_path):
+            os.mkdir(folder_path)
+
+        with open(folder_path + filename, "wb") as buffer:
+            shutil.copyfileobj(picture.file, buffer)
+
+        updated = get_time()
+        profile_pic = settings.ftp_server + name + filename
+        result = users.update_one({"_id": user_id}, {"$set": {
+            "profile_pic": profile_pic,
+            'updated': updated
+            }
+        })
+        
+        document = users.find_one({"_id": user_id})
+        return UserRead(**document)
