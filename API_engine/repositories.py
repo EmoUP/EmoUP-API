@@ -14,7 +14,7 @@ from wordcloud import WordCloud
 from .models import *
 from .exceptions import *
 from .database import users, doctors, musics
-from .utils import get_time, get_uuid, get_week_timestamp
+from .utils import get_time, get_uuid, get_week_timestamp, recommend, timestamp
 from .settings import server_settings as settings
 
 # # Native # #
@@ -135,7 +135,8 @@ class UsersRepository:
 
         notes_txt = 'Hello I am ' + document['name'] + "."
         for note in notes:
-            if start <= notes['captured'] <= end:
+            time = timestamp(note['captured'])
+            if start <= time <= end:
                 notes_txt+=note['note'] +' '
             else:
                 break  
