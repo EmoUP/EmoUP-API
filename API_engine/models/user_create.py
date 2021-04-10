@@ -12,7 +12,6 @@ __all__ = ("UserCreate",)
 
 class UserCreate(UserUpdate):
     """Body of User POST requests"""
-    name: str = UserFields.name
     email: str = UserFields.email
     password: str = UserFields.password
     
