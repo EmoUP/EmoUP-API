@@ -14,7 +14,7 @@ from wordcloud import WordCloud
 from .models import *
 from .exceptions import *
 from .database import users, doctors, musics
-from .utils import get_time, get_uuid, get_week_timestamp, recommend, timestamp
+from .utils import get_time, get_uuid, get_week_timestamp, timestamp
 from .settings import server_settings as settings
 
 # # Native # #
